@@ -23,25 +23,57 @@ public class IPv4 {
 		
 		int nroHosts=calcularNroHosts(mask);
 		
-		String subred=calcularSubred(ipv4,mask);
-		System.out.println("La subred es.."+subred);
+		String subred=calcularSubred(ipv4,Integer.parseInt(mask));
+		
+		System.out.println("La subred es.."+subred+" y los host son "+nroHosts);
 	//	rangoIp=sumarHostASubred(subred,nroHosts);
 		
 		return rangoIp;			
 	
 	}
 
+	private String convertirMascaraAbinaria(int mascara) {
+		String binario = null;
+		int i=0;
+		while(i<mascara) {
+			binario=binario+"1";
+			i++;
+		}
+		binario=rellenarCon0deAtrasParaAdelante(binario);
+		
+		return binario;
+	}
 	
+	private ArrayList<String> convertirStringMascaraAarraySeparadoen4(String mascaraBinaria){
+		ArrayList<String>mascaraBinariaSeparada=new ArrayList<String>();
+		
+		mascaraBinariaSeparada.add(mascaraBinaria.substring(0,7));
+		mascaraBinariaSeparada.add(mascaraBinaria.substring(8,15));
+		mascaraBinariaSeparada.add(mascaraBinaria.substring(16,23));
+		mascaraBinariaSeparada.add(mascaraBinaria.substring(24,31));
+		
+		return mascaraBinariaSeparada;
+	}
 	
 	
 	/*@
 	 * Devuelve un string con la ip de subred*/
-	public String calcularSubred(String ipv4, String mask) {
+	public String calcularSubred(String ipv4, int mask) {
 		int indice=0;
 		int contadorPuntos=0;
 		ArrayList<String>IpSeparadaEnOctetos=new ArrayList<String>();
 		ArrayList<String>IpSeparadaEnOctetosBinarios=new ArrayList<String>();
+		ArrayList<String>mascaraSeparadaEnOctetosBinarios;
 		ArrayList<String>IpSubred=new ArrayList<String>();
+		
+		
+		mascaraSeparadaEnOctetosBinarios=convertirStringMascaraAarraySeparadoen4(
+				convertirMascaraAbinaria(mask)
+				);
+		
+		
+		
+		
 		String subred=null;
 				
 		for(int i=0;i<ipv4.length();i++) {
@@ -67,12 +99,12 @@ public class IPv4 {
 			crearBinario8Bits(Integer.parseInt(IpSeparadaEnOctetos.get(j)))
 		);
 		j++;
-		}
-		
-		j=0;
+		}// aca está el error
 		while(j<IpSeparadaEnOctetosBinarios.size()) {
-			IpSubred.add(hacerAndDosNros(ipv4,mask));
-			System.out.println(IpSeparadaEnOctetosBinarios.get(j));
+			IpSubred.add(hacerAndDosNrosBinarios(
+					IpSeparadaEnOctetosBinarios.get(j),
+					mascaraSeparadaEnOctetosBinarios.get(j)));
+					System.out.println(IpSeparadaEnOctetosBinarios.get(j));
 			j++;
 		}
 		
@@ -109,15 +141,17 @@ public class IPv4 {
 	
 	}
 
-	public String  hacerAndDosNros(String pedazoipv4,String pedazomascara) {
+	public String  hacerAndDosNrosBinarios(String octetoIPv4Binario,String octetoMascaraBinario) {
 
 		ArrayList<String> ipBool=new ArrayList<String>();
 		ArrayList<String> maskBool=new ArrayList<String>();
 		ArrayList<String> subredBool=new ArrayList<String>();
 		
+		String ipBinaria=rellenarCon0(octetoMascaraBinario);
+		String mascara=rellenarCon0(octetoMascaraBinario);		
 		
-		this.binarioIP=crearBinario8Bits(Integer.parseInt(pedazoipv4)).toCharArray();
-		this.binarioMascara=crearBinario8Bits(Integer.parseInt(pedazomascara)).toCharArray();
+		this.binarioIP=ipBinaria.toCharArray();
+		this.binarioMascara=mascara.toCharArray();
 		
 		
 		int i=0;
@@ -192,6 +226,15 @@ public class IPv4 {
 		String convertido = nroBinario;
 		while(convertido.length()<8) {
 			convertido="0"+convertido;
+		}
+
+		return convertido;
+	}
+	
+	public String rellenarCon0deAtrasParaAdelante(String nroBinario) {
+		String convertido = nroBinario;
+		while(convertido.length()<8) {
+			convertido=convertido+"0";
 		}
 
 		return convertido;
