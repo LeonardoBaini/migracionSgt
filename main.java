@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import MetodosSql.MetodosSql;
+
 public class main {
 
 	public static void main(String[] args) {
@@ -593,7 +595,51 @@ public class main {
 		ipObje.rangoDeIp(ip.get(i), "28");
 		i++;
 	
-
+		/*
+		String server="ARDC1SVPWB004";
+		String database="ojohalconoperativo";
+		Sin usuario
+		sin password
+		
+		
+		String server1="ARDC1CSPWB037";
+		String database1="EOH_SGT";
+		Sin usuario
+		sin password
+		
+		String server2="ARDC1SVPWB004";
+		String database2="surveillance";
+		Sin usuario
+		sin password
+		
+		
+		
+	
+		ArrayList<String>resultadoquery;
+		
+		MetodosSql customDb=new MetodosSql(server, database, usuario, password);
+		resultadoquery=customDb.consultarUnaColumna("select operatorid from WDOG_Operators_Info;");
+		int i=0;
+		while(i<resultadoquery.size()) {
+			System.out.println(resultadoquery.get(i));			
+			i++;
+		}
+		
+		
+		ArrayList<String>resultadoquery1;
+		MetodosSql customDb1=new MetodosSql(server1, database1, usuario1, password1);
+		resultadoquery1=customDb1.consultarUnaColumna("select Name from Services;");
+		int j=0;
+		while(j<resultadoquery1.size()) {
+			System.out.println(resultadoquery1.get(j));			
+			j++;
+		}
+		
+		
+		
+		
+		
+*/
 
 	
 		}}}

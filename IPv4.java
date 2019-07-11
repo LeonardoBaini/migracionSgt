@@ -30,10 +30,11 @@ public class IPv4 {
 		int i=1;
 		int j=1;
 		while(i<=nroHosts) {
-			System.out.println(subred.get(0)+"."+subred.get(1)+"."+subred.get(2)+"."+Integer.sum(subred.get(3),j));
-			if(Integer.sum(subred.get(3),j)>254) {
-				System.out.println("Epppaaaa");
-				break;
+			System.out.println(subred.get(0)+"."+subred.get(1)+"."+subred.get(2)+"."+sum(subred.get(3),j));
+			if(
+				   sum(subred.get(3),j)>254){
+				   System.out.println("Epppaaaa");
+				   break;
 			}
 				
 			i++;
@@ -44,7 +45,9 @@ public class IPv4 {
 		return rangoIp;			
 	
 	}
-
+	private int sum(int a, int b) {
+		return a+b;
+	}
 	private String convertirMascaraAbinaria(int mascara) {
 		String binario = "1";
 		int i=1;
