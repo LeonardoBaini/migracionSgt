@@ -20,23 +20,36 @@ public class IPv4 {
 	public ArrayList<String> rangoDeIp(String ipv4,String mask){
 		
 		ArrayList<String> rangoIp=new ArrayList<String>();
+		ArrayList<Integer>subred;
 		
 		int nroHosts=calcularNroHosts(mask);
 		
-		String subred=calcularSubred(ipv4,Integer.parseInt(mask));
+		subred=calcularSubred(ipv4,Integer.parseInt(mask));		
 		
 		System.out.println("La subred es.."+subred+" y los host son "+nroHosts);
-	//	rangoIp=sumarHostASubred(subred,nroHosts);
+		int i=1;
+		int j=1;
+		while(i<=nroHosts) {
+			System.out.println(subred.get(0)+"."+subred.get(1)+"."+subred.get(2)+"."+Integer.sum(subred.get(3),j));
+			if(Integer.sum(subred.get(3),j)>254) {
+				System.out.println("Epppaaaa");
+				break;
+			}
+				
+			i++;
+			j++;
+		}
+	
 		
 		return rangoIp;			
 	
 	}
 
 	private String convertirMascaraAbinaria(int mascara) {
-		String binario = null;
-		int i=0;
+		String binario = "1";
+		int i=1;
 		while(i<mascara) {
-			binario=binario+"1";
+			binario="1"+binario;
 			i++;
 		}
 		binario=rellenarCon0deAtrasParaAdelante(binario);
@@ -47,10 +60,10 @@ public class IPv4 {
 	private ArrayList<String> convertirStringMascaraAarraySeparadoen4(String mascaraBinaria){
 		ArrayList<String>mascaraBinariaSeparada=new ArrayList<String>();
 		
-		mascaraBinariaSeparada.add(mascaraBinaria.substring(0,7));
-		mascaraBinariaSeparada.add(mascaraBinaria.substring(8,15));
-		mascaraBinariaSeparada.add(mascaraBinaria.substring(16,23));
-		mascaraBinariaSeparada.add(mascaraBinaria.substring(24,31));
+		mascaraBinariaSeparada.add(mascaraBinaria.substring(0,8));
+		mascaraBinariaSeparada.add(mascaraBinaria.substring(8,16));
+		mascaraBinariaSeparada.add(mascaraBinaria.substring(16,24));
+		mascaraBinariaSeparada.add(mascaraBinaria.substring(24,32));
 		
 		return mascaraBinariaSeparada;
 	}
@@ -58,24 +71,20 @@ public class IPv4 {
 	
 	/*@
 	 * Devuelve un string con la ip de subred*/
-	public String calcularSubred(String ipv4, int mask) {
+	public ArrayList<Integer> calcularSubred(String ipv4, int mask) {
 		int indice=0;
 		int contadorPuntos=0;
 		ArrayList<String>IpSeparadaEnOctetos=new ArrayList<String>();
 		ArrayList<String>IpSeparadaEnOctetosBinarios=new ArrayList<String>();
 		ArrayList<String>mascaraSeparadaEnOctetosBinarios;
-		ArrayList<String>IpSubred=new ArrayList<String>();
+		ArrayList<Integer>IpSubred=new ArrayList<Integer>();
 		
 		
 		mascaraSeparadaEnOctetosBinarios=convertirStringMascaraAarraySeparadoen4(
 				convertirMascaraAbinaria(mask)
-				);
+				);	
 		
 		
-		
-		
-		String subred=null;
-				
 		for(int i=0;i<ipv4.length();i++) {
 			 
 				if(contadorPuntos==3) {
@@ -99,19 +108,31 @@ public class IPv4 {
 			crearBinario8Bits(Integer.parseInt(IpSeparadaEnOctetos.get(j)))
 		);
 		j++;
-		}// aca está el error
-		while(j<IpSeparadaEnOctetosBinarios.size()) {
-			IpSubred.add(hacerAndDosNrosBinarios(
-					IpSeparadaEnOctetosBinarios.get(j),
-					mascaraSeparadaEnOctetosBinarios.get(j)));
-					System.out.println(IpSeparadaEnOctetosBinarios.get(j));
-			j++;
 		}
+		j=0;
+		while(j<IpSeparadaEnOctetosBinarios.size()) {
+			
+			IpSubred.add(
+					
+					binarioaDecimal(Integer.parseInt(
+					
+					hacerAndDosNrosBinarios(
+					IpSeparadaEnOctetosBinarios.get(j),
+					mascaraSeparadaEnOctetosBinarios.get(j)))
+					
+					));
+			
+			
+					
+			j++;
+			
+		}
+		
 		
 				
 		
 		
-		return subred;
+		return IpSubred;
 	}
 
 
@@ -130,68 +151,25 @@ public class IPv4 {
 		return nroTotalHosts-2;
 	}
 
-
-
-	private String resultadoAnd(String param1,String param2) {
-		if(Integer.valueOf(param1)+Integer.valueOf(param2)==2) {
-			return "1";
-		}else {
-			return "0";
-		}		
 	
-	}
-
 	public String  hacerAndDosNrosBinarios(String octetoIPv4Binario,String octetoMascaraBinario) {
 
-		ArrayList<String> ipBool=new ArrayList<String>();
-		ArrayList<String> maskBool=new ArrayList<String>();
-		ArrayList<String> subredBool=new ArrayList<String>();
-		
-		String ipBinaria=rellenarCon0(octetoMascaraBinario);
-		String mascara=rellenarCon0(octetoMascaraBinario);		
-		
-		this.binarioIP=ipBinaria.toCharArray();
-		this.binarioMascara=mascara.toCharArray();
-		
-		
+		String subred=null;
+				
 		int i=0;
-		while(i<8) {
-			if(this.binarioIP[i]=='1') {
-				ipBool.add("1");
-			}else 
-				if(this.binarioIP[i]=='0'){
-					ipBool.add("0");
-				}
-
-			if(this.binarioMascara[i]=='1') {
-				maskBool.add("1");
-			}else 
-				if(this.binarioMascara[i]=='0'){
-					maskBool.add("0");
-				}
-			i++;		
-		}
-
-		int j=0;
-		while(j<8) {
-			subredBool.add(resultadoAnd(ipBool.get(j),maskBool.get(j)));
-
-			j++;
-		}
-
-		System.out.println("IP");
-		System.out.println(ipBool);
-		System.out.println("Mascara");
-		System.out.println(maskBool);
-		System.out.println("Subred a la que pertenece");
-		System.out.println(subredBool);
-		
-		
-		
-		return subredBool.toString();
-
-
-
+		while(i<octetoIPv4Binario.length()) {
+			
+			if(octetoIPv4Binario.charAt(i)=='1' && octetoMascaraBinario.charAt(i)=='1') {
+				
+				if(subred==null) {subred="1";}else{subred=subred+"1";}	;
+				
+				}else {
+					
+				if(subred==null) {subred="0";}else{subred=subred+"0";}	;
+			}
+			i++;
+	}
+		return subred;
 	}
 
 
@@ -233,12 +211,27 @@ public class IPv4 {
 	
 	public String rellenarCon0deAtrasParaAdelante(String nroBinario) {
 		String convertido = nroBinario;
-		while(convertido.length()<8) {
+		while(convertido.length()<32) {
 			convertido=convertido+"0";
 		}
 
 		return convertido;
 	}
+	
+	
+	public static int binarioaDecimal(int number) {
+        int decimal = 0;
+        int binary = number;
+        int power = 0;
+ 
+        while (binary != 0) {
+            int lastDigit = binary % 10;
+            decimal += lastDigit * Math.pow(2, power);
+            power++;
+            binary = binary / 10;
+        }
+        return decimal;
+    }
 
 
 
