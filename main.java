@@ -6,7 +6,7 @@ public class main {
 
 	public static void main(String[] args) {
 		//String ip1="172.16.21.23";
-		ArrayList<String>ip=new ArrayList<String>();
+	/*	ArrayList<String>ip=new ArrayList<String>();
 		
 		ip.add("172.21.7.210");
 		ip.add("172.21.22.114");
@@ -594,7 +594,7 @@ public class main {
 		while(i<ip.size()) {
 		ipObje.rangoDeIp(ip.get(i), "28");
 		i++;
-	
+		*/
 		/*
 		String server="ARDC1SVPWB004";
 		String database="ojohalconoperativo";
@@ -640,8 +640,42 @@ public class main {
 		
 		
 */
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		TotemSgt totem=new TotemSgt("1127551"); // Input será el contrato y de ahí se deben buscar todos los datos.
+				
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 	
-		}}}
+		}}
 
 
