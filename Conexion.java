@@ -64,10 +64,10 @@ public class Conexion {
             	
                 Class.forName(driver);
                 c=DriverManager.getConnection(cadena);
-                 statemente=c.createStatement();
-                
+                statemente=c.createStatement();       
                  
                 conecto=true;
+                
             }catch(ClassNotFoundException e1){
             	
              System.out.println("Error en los drivers");

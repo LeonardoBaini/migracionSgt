@@ -656,7 +656,14 @@ public class main {
 		
 		
 		
-		TotemSgt totem=new TotemSgt("1127551"); // Input será el contrato y de ahí se deben buscar todos los datos.
+//	TotemSgt totem=new TotemSgt("1966288"); 
+	
+// Input será el contrato y de ahí se deben buscar todos los datos.
+	
+//	System.out.println(totem.obtenerIpRangeId());	
+		
+		
+		
 				
 		
 		

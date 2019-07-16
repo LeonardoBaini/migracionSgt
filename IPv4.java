@@ -18,7 +18,7 @@ public class IPv4 {
 	 * 
 	 * */
 	public ArrayList<String> rangoDeIp(String ipv4,String mask){
-		
+		String ipDelRango;
 		ArrayList<String> rangoIp=new ArrayList<String>();
 		ArrayList<Integer>subred;
 		
@@ -26,11 +26,14 @@ public class IPv4 {
 		
 		subred=calcularSubred(ipv4,Integer.parseInt(mask));		
 		
-		System.out.println("La subred es.."+subred+" y los host son "+nroHosts);
+		//System.out.println("La subred es.."+subred+" y los host son "+nroHosts);
 		int i=1;
 		int j=1;
+		
 		while(i<=nroHosts) {
-			System.out.println(subred.get(0)+"."+subred.get(1)+"."+subred.get(2)+"."+sum(subred.get(3),j));
+			ipDelRango=subred.get(0)+"."+subred.get(1)+"."+subred.get(2)+"."+sum(subred.get(3),j);
+			rangoIp.add(ipDelRango);
+			System.out.println();
 			if(
 				   sum(subred.get(3),j)>254){
 				   System.out.println("Epppaaaa");

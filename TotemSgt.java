@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 import MetodosSql.Credenciales;
 import MetodosSql.MetodosSql;
 
@@ -59,8 +61,8 @@ public class TotemSgt {
 	MetodosSql baseSGT=new MetodosSql(
 			Credenciales.ip_SGT,
 			Credenciales.base_SGT,
-			Credenciales.usuario_OjoHalconOperativo,
-			Credenciales.password_OjoHalconOperativo
+			Credenciales.usuario_SGT,
+			Credenciales.password_SGT
 			);
 	
 	public TotemSgt(String contrato) {
@@ -88,7 +90,7 @@ public class TotemSgt {
 		this.createdDate=MetodosSql.dameFechaDeHoy();
 		this.createdUserId	= 1021;
 		this.workSpaceId=1111111111;	
-		this.ipRangeId=1111111111; // Crear metodo con IPV4
+		this.ipRangeId=obtenerIpRangeId(); // Crear metodo con IPV4
 		this.preAddedDate=this.createdDate;
 		this.countryId=1;
 		this.recordingServer=obtenerIdRecordingServer();
@@ -100,6 +102,112 @@ public class TotemSgt {
 		
 	}
 	
+	public String consultarSiExisteTotem(String contrato) {
+		return baseSGT.consultarUnaCelda("select name from services where contractNumber='"+contrato+"';");
+	}
+	/**
+	 * 
+	 * @param ip recibe una Ip de un totem
+	 * @return devuelve 0 si no existe la ip en la tabla ips, si existe devuelve el iprangeid.
+	 */
+	private int existeIpSgt(String ip) {
+		String result=null;
+		String query="select IpRangeId from Ips where ipNumber='"+ip+"'";
+		result=baseSGT.consultarUnaCelda(query);
+		if(result==null) {
+			return 0;
+		}else {
+			return Integer.parseInt(result);
+		}		
+	}
+	/**
+	 * 
+	 * @return Obtiene el ipRangeId
+	 * Si la ip ya existía, entonces obtiene el iprangeId y sino, inserta los datos
+	 * Correspondientes en IpRanges y en Ips y devuelve el valor correspondiente
+	 */
+	public int obtenerIpRangeId() {
+		String ipDelTotem=obtenerIpdelTotem();
+		int IpRangeId=existeIpSgt(ipDelTotem);
+		
+		
+		 // verificar si existe la ip antes de agregar
+		
+		if(IpRangeId!=0) {
+			//si existe la ip, obtener el IpRangeId y asignárselo al totemSgt
+			return IpRangeId;
+			
+		}else {		
+			//No existe la ip en el rango, hay que agregarla en ipRanges.
+			
+			IpRangeId=agregarIpenTablaIpRanges(ipDelTotem);			
+			agregarRangodeIpTablaIps(IpRangeId,ipDelTotem);
+			
+		return IpRangeId;
+	}
+	}
+	
+	
+	
+
+	public boolean agregarRangodeIpTablaIps(int ipRangeId, String ipDelTotem) {
+		IPv4 managerIps=new IPv4();
+		managerIps.calcularSubred(ipDelTotem, 28);
+		String query="insert into ips(IpRangeId,IpNumber)values("+ipRangeId+",'200.59.13.90');";
+		
+		rangoDeIp();
+		
+		baseSGT.insertarOmodif(query);
+		
+		
+		return true;
+		
+		
+	}
+	
+	/**
+	 * 
+	 * @param ip Recibe la Ip de un totem, ingresa los datos en ipranges
+	 * @return Devuelve el id generado por el insert de ipranges que servirá para crear un service
+	 */
+	private int agregarIpenTablaIpRanges(String ip) {
+		int id_ipranges=0;
+		String query= 
+				"insert into IpRanges\r\n" + 
+				"(name,ipaddress,mask,available,isdeleted,createddate,createduserid,lastUpdatedDate,lastUpdatedUserId,DeletedDate,DeletedUserId,CountryId,AssignedService)\r\n" + 
+				"values(\r\n" + 
+				"'"+this.name+"'--name,\r\n" + 
+				",'"+ip+"'--ipaddress,\r\n" + 
+				",28--mask,\r\n" + 
+				",1--available,\r\n" + 
+				",0--isdeleted,\r\n" + 
+				",getdate()--createddate,\r\n" + 
+				",1021--createduserid,\r\n" + 
+				",getdate()--lastUpdatedDate,\r\n" + 
+				",1021--lastUpdateUserId,\r\n" + 
+				",null--DeletedDate,\r\n" + 
+				",null--DeletedUserId,\r\n" + 
+				",1--CountryId,\r\n" + 
+				",1--AssignedService\r\n" + 
+				")";
+		String queryIdIpRages="select max(id) from ipranges where name='"+this.name+"'";
+		id_ipranges=Integer.parseInt(baseSGT.consultarUnaCelda(queryIdIpRages));
+		
+		return id_ipranges;		
+		
+	}
+
+	private String obtenerIpdelTotem() {
+		String query="  SELECT  TOTEMID      \r\n" + 
+				"  FROM CLIENTES_EOH_NEW_CUSTOM\r\n" + 
+				"  where CONTRATO='"+this.contractNumber+"'";
+		String ip=null;
+		ip=baseOjoHalconOperativo.consultarUnaCelda(query);
+		ip=ip.replaceAll("T#","");
+		ip=ip.replaceAll(":9291","");
+		
+		return ip;
+	}
 
 	private String generarNroVpn() {
 		// TODO Auto-generated method stub
@@ -136,10 +244,12 @@ public class TotemSgt {
 
 
 	private String buscarNombreTotem(String contrato) {
-		return baseOjoHalconOperativo.consultarUnaColumna(
+		
+		return baseOjoHalconOperativo.consultarUnaCelda(
 				"SELECT top 1 Direccion\r\n" + 
 				"  FROM InformacionCliente\r\n" + 
-				"  where Abonado='"+contrato+"'").get(0);
+				"  where Abonado='"+contrato+"'");
+				
 	}
 
 	/*

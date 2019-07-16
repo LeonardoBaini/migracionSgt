@@ -131,10 +131,11 @@ public class MetodosSql extends Conexion {
          
          
         Conexion con = new Conexion();
-    //    System.out.println("Mostrando Query --->"+SentenciaSql+"<---");
+        System.out.println("Mostrando Query --->"+SentenciaSql+"<---");
          
         try {
             con.conectar(this.server,this.database,this.usuario,this.password);
+            if(con!= null) {
             con.resulsete=con.statemente.executeQuery(SentenciaSql);
             res = con.resulsete;
              
@@ -146,16 +147,56 @@ public class MetodosSql extends Conexion {
                 }
             con.desconectar();
  
-             
+            }
  
         } catch (Exception e) {
             System.out.println("Error en metodosSql.consultarUnaColumna"+e.getMessage());
-            con.desconectar();
+          
           
              
         }
  
         return arreglo;
+         
+ 
+    }
+   
+    public String consultarUnaCelda(String SentenciaSql) {
+        ResultSet res =null;
+        ArrayList<String> arreglo = new ArrayList<String>();//creo una matriz
+         
+         
+        Conexion con = new Conexion();
+    //    System.out.println("Mostrando Query --->"+SentenciaSql+"<---");
+         
+        try {
+            con.conectar(this.server,this.database,this.usuario,this.password);
+            if(con!= null) {
+            con.resulsete=con.statemente.executeQuery(SentenciaSql);
+            res = con.resulsete;
+             
+             
+              
+                while ( res.next()){
+                     
+                    arreglo.add(res.getString(1));
+                }
+            con.desconectar();
+ 
+            }
+ 
+        } catch (Exception e) {
+            System.out.println("Error en metodosSql.consultarUnaColumna"+e.getMessage());
+          
+          
+             
+        }
+        if(arreglo.isEmpty()) {
+        	return "No existen resultados para la busqueda "+SentenciaSql;
+        }else {
+        	  return arreglo.get(0);
+        }
+      
          
  
     }
