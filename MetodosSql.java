@@ -64,7 +64,7 @@ public class MetodosSql extends Conexion {
         Conexion con = new Conexion();
  
         try {
-            con.conectar(sentenciaSql, sentenciaSql, sentenciaSql, sentenciaSql);
+            con.conectar(this.server,this.database,this.usuario,this.password);
             con.statemente.executeUpdate(sentenciaSql);
  
             con.desconectar();
@@ -192,7 +192,8 @@ public class MetodosSql extends Conexion {
              
         }
         if(arreglo.isEmpty()) {
-        	return "No existen resultados para la busqueda "+SentenciaSql;
+        	return "";
+        	
         }else {
         	  return arreglo.get(0);
         }

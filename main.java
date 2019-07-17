@@ -656,7 +656,7 @@ public class main {
 		
 		
 		
-//	TotemSgt totem=new TotemSgt("1966288"); 
+TotemSgt totem=new TotemSgt("1242594"); 
 	
 // Input será el contrato y de ahí se deben buscar todos los datos.
 	

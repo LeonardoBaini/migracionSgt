@@ -12,10 +12,10 @@ public class Credenciales {
 	public static String usuario_SGT="sa";
 	public static String password_SGT="Prosegur2019";
 	
-	public static String base_Surveillance;
-	public static String ip_Surveillance;
-	public static String usuario_Surveillance;
-	public static String password_Surveillance;	
+	public static String base_Surveillance="surveillance";
+	public static String ip_Surveillance="10.54.119.183";
+	public static String usuario_Surveillance="custom";
+	public static String password_Surveillance="prosegur";	
 	
 	
 	
