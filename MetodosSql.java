@@ -131,7 +131,7 @@ public class MetodosSql extends Conexion {
          
          
         Conexion con = new Conexion();
-        System.out.println("Mostrando Query --->"+SentenciaSql+"<---");
+       // System.out.println("Mostrando Query --->"+SentenciaSql+"<---");
          
         try {
             con.conectar(this.server,this.database,this.usuario,this.password);

@@ -170,7 +170,8 @@ public class TotemSgt {
 		
 		if(IpRangeId!=0) {
 			//si existe la ip, obtener el IpRangeId y asignárselo al totemSgt
-			System.out.println("Ya existe la ip en la base!!!!");
+			BuscadorErrores.errores.add("Ya existe IpRangeId Reasignalo o borralo -> select * from ips where ipnumber="+ipDelTotem+" =>"+IpRangeId);
+			
 			return IpRangeId;
 			
 		}else {		
@@ -180,7 +181,8 @@ public class TotemSgt {
 			if(IpRangeId!=-1) {
 			agregarRangodeIpTablaIps(IpRangeId,ipDelTotem);
 			}else {
-				System.out.println("Como ya existe totem no voy a generar otro Rango de Ip... Revisa eso. ");
+				BuscadorErrores.errores.add("Ya existe totem no voy a generar otro Rango de Ip... Revisa eso. ");
+				
 			}
 			
 		return IpRangeId;
@@ -224,7 +226,8 @@ public class TotemSgt {
 
 	private boolean agregarRangodeIpTablaIps(int ipRangeId, String ipDelTotem) {
 		if(existeRangoIp(ipDelTotem)) {
-			System.out.println("Ya existe la ip "+ipDelTotem+" en la tabla IPS, no voy a generar otro rango de forma automática");
+			BuscadorErrores.errores.add("Ya existe la ip \"+ipDelTotem+\" en la tabla IPS, no voy a generar otro rango de forma automática");
+			
 			return false;
 		}else {			
 		
@@ -258,7 +261,7 @@ public class TotemSgt {
 	 * Si la ip es vacía retorna un -1;
 	 */
 	private int agregarIpenTablaIpRanges(String ip) {
-		if(!ip.isEmpty() && !totemExisteenBaseSgt()) {
+		if(!ip.isEmpty() && !BuscadorErrores.totemExisteenBaseSgt(ip)) {
 		int id_ipranges=0;
 		String query= 
 				"insert into IpRanges\r\n" + 
@@ -290,17 +293,16 @@ public class TotemSgt {
 		
 		return id_ipranges;		
 		}else {
-			System.out.println("Totem ya existe o la ip no es válida");
+			BuscadorErrores.errores.add("Totem ya existe o la ip no es válida");
+			/*System.out.println("Totem ya existe o la ip no es válida");
 			System.out.println("IP->"+getIP());
-			System.out.println("Nombre->"+getName());
+			System.out.println("Nombre->"+getName());*/
 			return-1;
 		}
 	}
 
 	
-	public void guardarTotem() {
-		
-	}
+	
 	
 	
 	
@@ -331,11 +333,13 @@ public class TotemSgt {
 		}
 		return prefijo+ceros+maximoNroVpnMasUno;
 	}
+	
 	/**
 	 * 
 	 * @param vpnDevuelve true si existe vpn en tabla services
 	 * @return
-	 */
+	 *
+	
 	private boolean existeVPNenServices(String vpn) {
 		String query="SELECT VPN FROM Services where vpn='"+vpn+"';";
 		String resultado="";
@@ -346,7 +350,7 @@ public class TotemSgt {
 			return true;
 		}
 		
-	}
+	}*/
 	private String obtenerIdRecordingServer() {
 		ArrayList<String>listaRecordingServers; // debe ser 1 si es más, hay que avisar y que el negocio mueva las cam a un solo recording
 		String query=
@@ -355,7 +359,8 @@ public class TotemSgt {
 		listaRecordingServers=baseSurveillance.consultarUnaColumna(query);
 		
 		if(listaRecordingServers.size()>1) {
-			JOptionPane.showMessageDialog(null, "Alerta!!! este contrato tiene las camaras en mas de un recording "+this.getContractNumber());
+			BuscadorErrores.errores.add("Alerta!!! este contrato tiene las camaras en mas de un recording "+this.getContractNumber());
+		
 			return null;
 		}else {
 			
@@ -389,7 +394,7 @@ public class TotemSgt {
 	}
 
 
-	private String getIP() {
+	public String getIP() {
 		return this.ipDelTotem;
 	}
 
@@ -411,18 +416,7 @@ public class TotemSgt {
 		return true;
 	}
 	
-	public boolean totemExisteenBaseSgt() {
-		int flag=0;
-		String SentenciaSql=
-				 "select count(1) from IpRanges"
-				+ " where ipAddress='"+this.getIP()+"'";
-		flag=Integer.parseInt(baseSGT.consultarUnaCelda(SentenciaSql));
-		if(flag>0) {
-		return true;
-		}else {
-		return false;
-		}
-	}
+	
 	
 
 	
