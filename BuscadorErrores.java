@@ -36,6 +36,7 @@ public class BuscadorErrores {
 		if(totem.getIpRangeId()==0)errores.add("IpRangeId Inválido -> "+totem.getIpRangeId());
 		if(totem.getRecordingServer().length()<20)errores.add("RecordingServer Inválido -> "+totem.getRecordingServer());
 		if(totem.getVpn().isEmpty())errores.add("Vpn Inválida -> "+totem.getVpn());	
+		if(totemExisteEnSgtServices(totem))errores.add("Service ya cargado con contrato -> "+totem.getContractNumber());	
 		
 		
 		return errores;
@@ -72,5 +73,17 @@ public class BuscadorErrores {
 		}else {
 		return false;
 		}
+	}
+	private static boolean totemExisteEnSgtServices(TotemSgt totem) {
+		String query="SELECT count(1) from services\r\n" + 
+				"  where contractnumber='"+totem.getContractNumber()+"';";
+		String resultado=baseSGT.consultarUnaCelda(query);
+		if(resultado.equals("0")) {
+			return false;
+		}else {
+			return true;
+		}
+		
+		
 	}
 }

@@ -88,7 +88,7 @@ public class TotemSgt {
 		this.isDeleted=0;
 		this.createdDate=MetodosSql.dameFechaDeHoy();
 		this.createdUserId	= 1021;
-		this.workSpaceId=1111111111;	
+		this.workSpaceId=1;// 1 por default hasta que se defina si se debe	averiguar el operador que se usa o no.
 		this.ipRangeId=obtenerIpRangeId(); // Crear metodo con IPV4 // Si tiene -1 o la ip ya existe o hay un problema con ese contrato.
 		this.preAddedDate=this.createdDate;
 		this.countryId=1;
@@ -170,7 +170,7 @@ public class TotemSgt {
 		
 		if(IpRangeId!=0) {
 			//si existe la ip, obtener el IpRangeId y asignárselo al totemSgt
-			BuscadorErrores.errores.add("Ya existe IpRangeId Reasignalo o borralo -> select * from ips where ipnumber="+ipDelTotem+" =>"+IpRangeId);
+			//BuscadorErrores.errores.add("Ya existe IpRangeId Reasignalo o borralo -> select * from ips where ipnumber="+ipDelTotem+" =>"+IpRangeId);
 			
 			return IpRangeId;
 			
@@ -363,8 +363,11 @@ public class TotemSgt {
 		
 			return null;
 		}else {
-			
+			if(listaRecordingServers.isEmpty()) {
+				return "";
+			}else {
 			return listaRecordingServers.get(0);
+			}
 		}
 		
 		
