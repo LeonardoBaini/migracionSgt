@@ -1,10 +1,11 @@
+package Clases;
 import java.util.ArrayList;
 
 import MetodosSql.Credenciales;
 import MetodosSql.MetodosSql;
 
 public class BuscadorErrores {
-	static ArrayList<String>errores=new ArrayList<String>();	
+	public static ArrayList<String>errores=new ArrayList<String>();	
 	
 	MetodosSql baseOjoHalconOperativo=new MetodosSql(
 			Credenciales.ip_OjoHalconOperativo,

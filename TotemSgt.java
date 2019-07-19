@@ -1,3 +1,4 @@
+package Clases;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
@@ -69,7 +70,7 @@ public class TotemSgt {
 	public TotemSgt(String contrato) {
 		
 		prepararTotemParaSGT(contrato);
-		mostrarAtributos();
+		//mostrarAtributos();
 		
 	}
 	

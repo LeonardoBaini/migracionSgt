@@ -17,6 +17,7 @@ import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import Clases.BuscadorErrores;
 
 
  
@@ -150,7 +151,8 @@ public class MetodosSql extends Conexion {
             }
  
         } catch (Exception e) {
-            System.out.println("Error en metodosSql.consultarUnaColumna"+e.getMessage());
+          //  System.out.println("Error en metodosSql.consultarUnaColumna"+e.getMessage());
+            BuscadorErrores.errores.add("Error en metodosSql.consultarUnaColumna l155"+e.getMessage());
           
           
              
@@ -186,7 +188,8 @@ public class MetodosSql extends Conexion {
             }
  
         } catch (Exception e) {
-            System.out.println("Error en metodosSql.consultarUnaColumna"+e.getMessage());
+        	BuscadorErrores.errores.add("Error en metodosSql.consultarUnaCelda l191"+e.getMessage());
+           
           
           
              
