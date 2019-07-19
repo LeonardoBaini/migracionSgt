@@ -11,8 +11,7 @@ public class TotemSgt {
 	private String name;//	[OjoHalconOperativo].[InformacionCliente].direccion	SI
 	private int clientNumber;//	Default 1. Luego Argentina lo Edita.	SI
 	private String contractNumber;//	[OjoHalconOperativo].[InformacionCliente].abonado	SI
-	private int serviceStatus;
-	private int administrativeId;//	= 1 (Activo) | 9 (Fuera de Horario). Este dato se toma de [OjoHalconOperativo].[CalenServParcial] (si está en la Tabla es 12 Hs).	SI
+	private int serviceStatusadministrativeId;//	= 1 (Activo) | 9 (Fuera de Horario). Este dato se toma de [OjoHalconOperativo].[CalenServParcial] (si está en la Tabla es 12 Hs).	SI
 	private String address;//	[OjoHalconOperativo].[InformacionCliente].direccion	SI
 	// geoLattitude=null;//	Null	NO
 	// geoLongitud=null;// 	Null	NO
@@ -84,10 +83,8 @@ public class TotemSgt {
 		this.name=buscarNombreTotem(contrato);		
 		this.clientNumber=1; 
 		this.contractNumber=contrato;
-		this.serviceStatus=1; 
-		this.administrativeId=1111111111; // Consulta, si está en 12 hs, que valor debe ponerse?.
-		this.address=name; 
-		this.servicePlanId=1111111111;// Cuando creen los service plans id vemos que valor lleva --> Lo debe crear Pablo.
+		this.serviceStatusadministrativeId=1; // Siempre en uno, activo
+		this.address=name; 		
 		this.isDeleted=0;
 		this.createdDate=MetodosSql.dameFechaDeHoy();
 		this.createdUserId	= 1021;
@@ -101,9 +98,40 @@ public class TotemSgt {
 		this.Updating=0;
 		this.vpn=generarNroVpn();
 		this.managementServer=1;		
+		/*Se pone a lo ultimo porque obtenerIpRangeId() se encargará de averigüar la ip, asi no se llama 2 veces =) */
+		this.servicePlanId=obtenerServicePlanid(this.ipDelTotem);// Cuando creen los service plans id vemos que valor lleva --> Lo debe crear Pablo.
 		
 	}
-	
+	/**
+	 * 
+	 * @param ipDelTotem 
+	 * @return devuelve el serviceplanid, si llegase a ser -1, tuvo un problema en traerlo.
+	 * y hay que revisar los serviceplandid de calenservparcial si no encontró nada en calenservparcial
+	 * quiere decir que es un 24 hs.
+	 */
+	private int obtenerServicePlanid(String ipDelTotem) {
+		int serviceplanId=1;
+		String resultado="";
+		String prefijo="T#";
+		String sufijo=":9291";
+		String totemId=prefijo+ipDelTotem+sufijo;
+		String query="SELECT servicePlanId\r\n" + 
+				"  FROM [OjoHalconOperativo].[dbo].[CalenServParcial]\r\n" + 
+				"  where TOTEM_ID ='"+totemId+"'    \r\n" + 
+				"  group by servicePlanId";
+		resultado=baseOjoHalconOperativo.consultarUnaCelda(query);
+		if(resultado.isEmpty())
+			return 1;
+		
+		try {
+			serviceplanId=Integer.parseInt(resultado);
+		}catch (Exception e) {
+			System.out.println(e.getCause());
+		}
+		
+		return serviceplanId;
+	}
+
 	public String consultarSiExisteTotem(String contrato) {
 		return baseSGT.consultarUnaCelda("select name from services where contractNumber='"+contrato+"';");
 	}
@@ -268,7 +296,9 @@ public class TotemSgt {
 	}
 
 	
-	
+	public void guardarTotem() {
+		
+	}
 	
 	
 	
@@ -286,10 +316,35 @@ public class TotemSgt {
 	}
 
 	private String generarNroVpn() {
-		// TODO Auto-generated method stub
-		return null;
+		String cadenaEjemplo="EOHa000025";
+		String SentenciaSql = "SELECT substring(max(name),5,9)+1  FROM [EOH_SGT].[dbo].[VPN]";
+		String maximoNroVpnMasUno=baseSGT.consultarUnaCelda(SentenciaSql);
+		String prefijo="EOHa";
+		int cerosArellenarEntreCadenas=cadenaEjemplo.length()-maximoNroVpnMasUno.length()-prefijo.length();
+		String ceros="0";
+		int i=1;
+		while(i<cerosArellenarEntreCadenas) {
+			ceros=ceros+"0";
+			i++;
+		}
+		return prefijo+ceros+maximoNroVpnMasUno;
 	}
-
+	/**
+	 * 
+	 * @param vpnDevuelve true si existe vpn en tabla services
+	 * @return
+	 */
+	private boolean existeVPNenServices(String vpn) {
+		String query="SELECT VPN FROM Services where vpn='"+vpn+"';";
+		String resultado="";
+		resultado=baseSGT.consultarUnaCelda(query);
+		if(resultado.isEmpty()) {
+			return false;
+		}else {
+			return true;
+		}
+		
+	}
 	private String obtenerIdRecordingServer() {
 		ArrayList<String>listaRecordingServers; // debe ser 1 si es más, hay que avisar y que el negocio mueva las cam a un solo recording
 		String query=
@@ -313,8 +368,7 @@ public class TotemSgt {
 		System.out.println("name->"+getName());
 		System.out.println("clientNumber->"+getClientNumber());
 		System.out.println("contractNumber->"+getContractNumber());
-		System.out.println("ServiceStatus->"+getServiceStatus());
-		System.out.println("administrativeId->"+getAdministrativeId());
+		System.out.println("ServiceStatusadministrativeId->"+getServiceStatusAdministrativeId());
 		System.out.println("address->"+getAddress());
 		System.out.println("servicePlanId->"+getServicePlanId());
 		System.out.println("isDeleted->"+getIsDeleted());
@@ -389,18 +443,13 @@ public class TotemSgt {
 	public void setContractNumber(String contractNumber) {
 		this.contractNumber = contractNumber;
 	}
-	public int getServiceStatus() {
-		return serviceStatus;
+	public int getServiceStatusAdministrativeId() {
+		return serviceStatusadministrativeId;
 	}
-	public void setServiceStatus(int serviceStatus) {
-		this.serviceStatus = serviceStatus;
+	public void setServiceStatusAdministrativeId(int serviceStatusadministrativeId) {
+		this.serviceStatusadministrativeId = serviceStatusadministrativeId;
 	}
-	public int getAdministrativeId() {
-		return administrativeId;
-	}
-	public void setAdministrativeId(int administrativeId) {
-		this.administrativeId = administrativeId;
-	}
+	
 	public String getAddress() {
 		return address;
 	}
