@@ -110,7 +110,7 @@ public class TotemSgt {
 	 * quiere decir que es un 24 hs.
 	 */
 	private int obtenerServicePlanid(String ipDelTotem) {
-		int serviceplanId=1;
+		int serviceplanId=-1;
 		String resultado="";
 		String prefijo="T#";
 		String sufijo=":9291";
@@ -120,16 +120,18 @@ public class TotemSgt {
 				"  where TOTEM_ID ='"+totemId+"'    \r\n" + 
 				"  group by servicePlanId";
 		resultado=baseOjoHalconOperativo.consultarUnaCelda(query);
-		if(resultado.isEmpty())
+		if(resultado.isEmpty()&&esIpValida(ipDelTotem))
 			return 1;
 		
 		try {
 			serviceplanId=Integer.parseInt(resultado);
 		}catch (Exception e) {
 			System.out.println(e.getCause());
+			return -1;
 		}
-		
 		return serviceplanId;
+		
+		
 	}
 
 	public String consultarSiExisteTotem(String contrato) {
