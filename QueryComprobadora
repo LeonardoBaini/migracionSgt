@@ -1,0 +1,22 @@
+declare @contrato as varchar(max)
+set @contrato='1242594'
+
+declare @name as varchar(max)
+declare @ipRangesId as varchar(max)
+
+set @name=(select name from services where ContractNumber=@contrato);
+
+set @ipRangesId=(select id from ipranges where name=@name);
+SELECT *
+  FROM [EOH_SGT].[dbo].[Ips]
+
+  where iprangeid=@ipRangesId
+
+  SELECT *
+  FROM [EOH_SGT].[dbo].[IpRanges]
+
+  where id=@ipRangesId
+
+  SELECT *
+  FROM [EOH_SGT].[dbo].[Services]
+  where name=@name;

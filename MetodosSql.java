@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 import Clases.BuscadorErrores;
 
@@ -122,6 +123,32 @@ public class MetodosSql extends Conexion {
          
  
     }
+    
+    public ResultSet consultarResultSet(String SentenciaSql) {
+        ResultSet res =null;
+              
+        Conexion con = new Conexion();
+         
+         
+        try {
+            con.conectar(this.server,this.database,this.usuario,this.password);
+            con.resulsete=con.statemente.executeQuery(SentenciaSql);
+            res = con.resulsete;
+           // ResultSetMetaData rmd = res.getMetaData(); //guardo los datos referentes al resultset
+            
+           // con.desconectar();            
+ 
+        } catch (Exception e) {
+            System.out.println("Error en metodosSql.consultarResulset"+e.getMessage());
+            System.out.println(e.getLocalizedMessage());
+          
+             
+        }
+ 
+        return res;
+         
+ 
+    }
      
          
          
@@ -163,7 +190,7 @@ public class MetodosSql extends Conexion {
  
     }
    
-    public String consultarUnaCelda(String SentenciaSql) {
+    public String consultarUnaCelda(String SentenciaSql, JTextArea txtrLogs) {
         ResultSet res =null;
         ArrayList<String> arreglo = new ArrayList<String>();//creo una matriz
          
@@ -172,6 +199,8 @@ public class MetodosSql extends Conexion {
     //    System.out.println("Mostrando Query --->"+SentenciaSql+"<---");
          
         try {
+        	if(txtrLogs!=null)
+        	txtrLogs.setText(txtrLogs.getText()+"\nIntentando conectar con "+this.server+" -> "+this.database);
             con.conectar(this.server,this.database,this.usuario,this.password);
             if(con!= null) {
             con.resulsete=con.statemente.executeQuery(SentenciaSql);
@@ -189,6 +218,12 @@ public class MetodosSql extends Conexion {
  
         } catch (Exception e) {
         	BuscadorErrores.errores.add("Error en metodosSql.consultarUnaCelda l191"+e.getMessage());
+        	if(txtrLogs!=null) {
+        	txtrLogs.setText(txtrLogs.getText()+"\nError en metodosSql.consultarUnaCelda l191"+e.getMessage());
+        	txtrLogs.setText(txtrLogs.getText()+"\n"+SentenciaSql);
+        	txtrLogs.setText(txtrLogs.getText()+"\nFIN DE LA EJECUCIÓN");
+        	}
+        	
            
           
           

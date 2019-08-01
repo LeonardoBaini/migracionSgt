@@ -30,14 +30,14 @@ public class BuscadorErrores {
 	public static ArrayList<String>erroresTotem(TotemSgt totem){
 			
 		
-		if(!esIpValida(totem.getIP()))errores.add("IP Inválida -> "+totem.getIP());
-		if(totem.getName().isEmpty())errores.add("Name Inválido Vacío -> "+totem.getName());
-		if(totem.getAddress().isEmpty())errores.add("Address Inválido Vacío -> "+totem.getAddress());
-		if(servicePlanInvalido(totem))errores.add("ServicePlanId Inválido -> "+totem.getServicePlanId());
-		if(totem.getIpRangeId()==0)errores.add("IpRangeId Inválido -> "+totem.getIpRangeId());
-		if(totem.getRecordingServer().length()<20)errores.add("RecordingServer Inválido -> "+totem.getRecordingServer());
-		if(totem.getVpn().isEmpty())errores.add("Vpn Inválida -> "+totem.getVpn());	
-		if(totemExisteEnSgtServices(totem))errores.add("Service ya cargado con contrato -> "+totem.getContractNumber());	
+		if(!esIpValida(totem.getIP()))errores.add("erroresTotem IP Inválida -> "+totem.getIP());
+		if(totem.getName().isEmpty())errores.add("erroresTotem Name Inválido Vacío -> "+totem.getName());
+		if(totem.getAddress().isEmpty())errores.add("erroresTotem Address Inválido Vacío -> "+totem.getAddress());
+		if(servicePlanInvalido(totem))errores.add("erroresTotem ServicePlanId Inválido -> "+totem.getServicePlanId());
+		if(totem.getIpRangeId()==0)errores.add("erroresTotem erroresTotem IpRangeId Inválido -> "+totem.getIpRangeId());
+		if(totem.getRecordingServer().length()<20)errores.add("erroresTotem RecordingServer Inválido -> "+totem.getRecordingServer());
+		if(totem.getVpn().isEmpty())errores.add("erroresTotem Vpn Inválida -> "+totem.getVpn());	
+		if(totemExisteEnSgtServices(totem))errores.add("erroresTotem Service ya cargado con contrato -> "+totem.getContractNumber());	
 		
 		
 		return errores;
@@ -68,7 +68,7 @@ public class BuscadorErrores {
 		String SentenciaSql=
 				 "select count(1) from IpRanges"
 				+ " where ipAddress='"+ip+"'";
-		flag=Integer.parseInt(baseSGT.consultarUnaCelda(SentenciaSql));
+		flag=Integer.parseInt(baseSGT.consultarUnaCelda(SentenciaSql, null));
 		if(flag>0) {
 		return true;
 		}else {
@@ -78,7 +78,7 @@ public class BuscadorErrores {
 	private static boolean totemExisteEnSgtServices(TotemSgt totem) {
 		String query="SELECT count(1) from services\r\n" + 
 				"  where contractnumber='"+totem.getContractNumber()+"';";
-		String resultado=baseSGT.consultarUnaCelda(query);
+		String resultado=baseSGT.consultarUnaCelda(query, null);
 		if(resultado.equals("0")) {
 			return false;
 		}else {

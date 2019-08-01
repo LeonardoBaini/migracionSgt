@@ -2,6 +2,7 @@ package Clases;
 import java.util.ArrayList;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 
 import MetodosSql.Credenciales;
 import MetodosSql.MetodosSql;
@@ -69,19 +70,26 @@ public class TotemSgt {
 	
 	public TotemSgt(String contrato) {
 		
-		prepararTotemParaSGT(contrato);
+		prepararTotemParaSGT(contrato, null);
 		//mostrarAtributos();
 		
 	}
 	
+	public TotemSgt(String contrato, JTextArea txtrLogs) {
+		txtrLogs.setText("\nComenzando proceso");		
+		prepararTotemParaSGT(contrato,txtrLogs);
+		txtrLogs.setText(txtrLogs.getText()+"\nFinalizando creación de totem");		
+	}
+
 	/**
 	 * Metodo que completa todos los campos necesarios para crear el objeto y luego otro método se encargará de guardarlo.
 	 * @param contrato 
+	 * @param txtrLogs 
 	 */
 	
-	private void prepararTotemParaSGT(String contrato) {
+	private void prepararTotemParaSGT(String contrato, JTextArea txtrLogs) {
 				
-		this.name=buscarNombreTotem(contrato);		
+		this.name=buscarNombreTotem(contrato,txtrLogs);		
 		this.clientNumber=1; 
 		this.contractNumber=contrato;
 		this.serviceStatusadministrativeId=1; // Siempre en uno, activo
@@ -120,7 +128,7 @@ public class TotemSgt {
 				"  FROM [OjoHalconOperativo].[dbo].[CalenServParcial]\r\n" + 
 				"  where TOTEM_ID ='"+totemId+"'    \r\n" + 
 				"  group by servicePlanId";
-		resultado=baseOjoHalconOperativo.consultarUnaCelda(query);
+		resultado=baseOjoHalconOperativo.consultarUnaCelda(query, null);
 		if(resultado.isEmpty()&&esIpValida(ipDelTotem))
 			return 1;
 		
@@ -136,7 +144,7 @@ public class TotemSgt {
 	}
 
 	public String consultarSiExisteTotem(String contrato) {
-		return baseSGT.consultarUnaCelda("select name from services where contractNumber='"+contrato+"';");
+		return baseSGT.consultarUnaCelda("select name from services where contractNumber='"+contrato+"';", null);
 	}
 	/**
 	 * 
@@ -146,7 +154,7 @@ public class TotemSgt {
 	private int existeIpSgt(String ip) {
 		String result=null;
 		String query="select IpRangeId from Ips where ipNumber='"+ip+"'";
-		result=baseSGT.consultarUnaCelda(query);
+		result=baseSGT.consultarUnaCelda(query, null);
 		if(result==null) {
 			return 0;
 		}else if (result.isEmpty()) {
@@ -209,7 +217,7 @@ public class TotemSgt {
 	private boolean existeRangoIp(String unaIpDelRango) {
 		String SentenciaSql="select count(1) from ips where ipnumber='"+unaIpDelRango+"';";
 		
-		if(baseSGT.consultarUnaCelda(SentenciaSql).equals("0")) {
+		if(baseSGT.consultarUnaCelda(SentenciaSql, null).equals("0")) {
 			return false;
 		}else {
 			return true;
@@ -284,7 +292,7 @@ public class TotemSgt {
 				")";
 		baseSGT.insertarOmodif(query);
 		String queryIdIpRages="select max(id) from ipranges where name='"+this.name+"'";
-		String resultado=baseSGT.consultarUnaCelda(queryIdIpRages);
+		String resultado=baseSGT.consultarUnaCelda(queryIdIpRages, null);
 		try {
 		id_ipranges=Integer.parseInt(resultado);
 		
@@ -313,7 +321,7 @@ public class TotemSgt {
 				"  FROM CLIENTES_EOH_NEW_CUSTOM\r\n" + 
 				"  where CONTRATO='"+this.contractNumber+"'";
 		String ip=null;
-		ip=baseOjoHalconOperativo.consultarUnaCelda(query);
+		ip=baseOjoHalconOperativo.consultarUnaCelda(query, null);
 		ip=ip.replaceAll("T#","");
 		ip=ip.replaceAll(":9291","");
 		this.ipDelTotem=ip;
@@ -323,7 +331,7 @@ public class TotemSgt {
 	private String generarNroVpn() {
 		String cadenaEjemplo="EOHa000025";
 		String SentenciaSql = "SELECT substring(max(name),5,9)+1  FROM [EOH_SGT].[dbo].[VPN]";
-		String maximoNroVpnMasUno=baseSGT.consultarUnaCelda(SentenciaSql);
+		String maximoNroVpnMasUno=baseSGT.consultarUnaCelda(SentenciaSql, null);
 		String prefijo="EOHa";
 		int cerosArellenarEntreCadenas=cadenaEjemplo.length()-maximoNroVpnMasUno.length()-prefijo.length();
 		String ceros="0";
@@ -365,6 +373,8 @@ public class TotemSgt {
 			return null;
 		}else {
 			if(listaRecordingServers.isEmpty()) {
+				BuscadorErrores.errores.add("No hay hardware en Surveillance.hardware que contenga en el nombre el contrato ->"+this.getContractNumber()+"\n"
+						+ "la query es "+query);
 				return "";
 			}else {
 			return listaRecordingServers.get(0);
@@ -402,12 +412,13 @@ public class TotemSgt {
 		return this.ipDelTotem;
 	}
 
-	private String buscarNombreTotem(String contrato) {
-		
+	private String buscarNombreTotem(String contrato, JTextArea txtrLogs) {
+		if(txtrLogs!=null)
+		txtrLogs.setText(txtrLogs.getText()+"\nIntentando baseOjoHalconOperativo.consultarUnaCelda");
 		return baseOjoHalconOperativo.consultarUnaCelda(
 				"SELECT top 1 Direccion\r\n" + 
 				"  FROM InformacionCliente\r\n" + 
-				"  where Abonado='"+contrato+"'");
+				"  where Abonado='"+contrato+"'",txtrLogs);
 				
 	}
 
