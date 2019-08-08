@@ -1,22 +1,72 @@
 declare @contrato as varchar(max)
-set @contrato='1242594'
+set @contrato='1193841'
 
 declare @name as varchar(max)
 declare @ipRangesId as varchar(max)
 
-set @name=(select name from services where ContractNumber=@contrato);
+  set @name=(select name from services where ContractNumber=@contrato);
 
-set @ipRangesId=(select id from ipranges where name=@name);
-SELECT *
-  FROM [EOH_SGT].[dbo].[Ips]
-
-  where iprangeid=@ipRangesId
-
+  set @ipRangesId=(select id from ipranges where name=@name);
+ 
+  select '' as IpRanges
   SELECT *
   FROM [EOH_SGT].[dbo].[IpRanges]
 
   where id=@ipRangesId
 
+  select '' as Services
   SELECT *
   FROM [EOH_SGT].[dbo].[Services]
   where name=@name;
+  
+  select '' as ServiceCameras
+  SELECT * FROM [EOH_SGT].[dbo].[ServiceCameras]
+  where name like '%'+@contrato+'%';
+  
+  select '' as ServiceDevices
+  select * from  [EOH_SGT].[dbo].[ServiceDevices]
+  where serviceid=(select id from services where name=@name)
+  
+  select '' as 'IPS'
+  SELECT *
+  FROM [EOH_SGT].[dbo].[Ips] 
+  where iprangeid=@ipRangesId
+  
+  
+  *************************************************************
+  declare @contrato as varchar(max)
+set @contrato='1193841'
+
+declare @name as varchar(max)
+declare @ipRangesId as varchar(max)
+
+  set @name=(select name from services where ContractNumber=@contrato);
+  set @ipRangesId=(select id from ipranges where name=@name);
+
+
+
+    select '' as ServiceCameras
+  delete FROM [EOH_SGT].[dbo].[ServiceCameras]
+  where name like '%'+@contrato+'%';
+
+  
+  select '' as ServiceDevices
+  delete from  [EOH_SGT].[dbo].[ServiceDevices]
+  where serviceid=(select id from services where name=@name)
+  
+
+  select '' as Services
+  delete
+  FROM [EOH_SGT].[dbo].[Services]
+  where name=@name;
+
+    select '' as 'IPS'
+  delete
+  FROM [EOH_SGT].[dbo].[Ips] 
+  where iprangeid=@ipRangesId
+  
+    delete
+  FROM [EOH_SGT].[dbo].[IpRanges]
+  where name=@name
+
+  

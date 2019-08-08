@@ -63,6 +63,7 @@ public class MetodosSql extends Conexion {
         System.out.println(sentenciaSql);
         //System.out.println("Luego borrar este syso, solo es para mostrar los datos enviados a la base, (metodosSql linea 34 y 35)");
         int status=0;
+        String error;
         Conexion con = new Conexion();
  
         try {
@@ -74,8 +75,10 @@ public class MetodosSql extends Conexion {
              
  
         } catch (SQLException e) {
-            System.out.println("Error en insertarOmodificar");
-            System.out.println(e.getMessage());
+           
+        	error="Error en insertarOmodificar "+e.getMessage();
+            System.out.println(error);
+            BuscadorErrores.errores.add(error);
             con.desconectar();
             status=-1;
            

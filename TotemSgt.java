@@ -88,7 +88,7 @@ public class TotemSgt {
 	 */
 	
 	private void prepararTotemParaSGT(String contrato, JTextArea txtrLogs) {
-				
+		System.out.println("Preparando totem");
 		this.name=buscarNombreTotem(contrato,txtrLogs);		
 		this.clientNumber=1; 
 		this.contractNumber=contrato;
@@ -109,7 +109,7 @@ public class TotemSgt {
 		this.managementServer=1;		
 		/*Se pone a lo ultimo porque obtenerIpRangeId() se encargará de averigüar la ip, asi no se llama 2 veces =) */
 		this.servicePlanId=obtenerServicePlanid(this.ipDelTotem);// Cuando creen los service plans id vemos que valor lleva --> Lo debe crear Pablo.
-		
+		System.out.println("Fin preparar totem");
 	}
 	/**
 	 * 
@@ -302,7 +302,7 @@ public class TotemSgt {
 		
 		return id_ipranges;		
 		}else {
-			BuscadorErrores.errores.add("Totem ya existe o la ip no es válida");
+			BuscadorErrores.errores.add("Totem ya existe o la ip no es válida, Ip totem en IPRanges es "+ip);
 			/*System.out.println("Totem ya existe o la ip no es válida");
 			System.out.println("IP->"+getIP());
 			System.out.println("Nombre->"+getName());*/

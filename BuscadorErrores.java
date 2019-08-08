@@ -34,7 +34,7 @@ public class BuscadorErrores {
 		if(totem.getName().isEmpty())errores.add("erroresTotem Name Inválido Vacío -> "+totem.getName());
 		if(totem.getAddress().isEmpty())errores.add("erroresTotem Address Inválido Vacío -> "+totem.getAddress());
 		if(servicePlanInvalido(totem))errores.add("erroresTotem ServicePlanId Inválido -> "+totem.getServicePlanId());
-		if(totem.getIpRangeId()==0)errores.add("erroresTotem erroresTotem IpRangeId Inválido -> "+totem.getIpRangeId());
+		
 		if(totem.getRecordingServer().length()<20)errores.add("erroresTotem RecordingServer Inválido -> "+totem.getRecordingServer());
 		if(totem.getVpn().isEmpty())errores.add("erroresTotem Vpn Inválida -> "+totem.getVpn());	
 		if(totemExisteEnSgtServices(totem))errores.add("erroresTotem Service ya cargado con contrato -> "+totem.getContractNumber());	
