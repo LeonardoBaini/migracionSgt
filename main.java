@@ -21,6 +21,7 @@ if(args[0].equalsIgnoreCase("rollback")) {
     
     if(estaSeguro.nextLine().equalsIgnoreCase("si")) {
     System.out.println("Cumpliendo sus órdenes, haciendo Rollback del contrato ->  " + contrato);
+    AdministradorSgt.hacerRollback(contrato);
     }else {
     	System.out.println("Ok, no haré cambios, hasta la próxima!.");
     }
@@ -37,7 +38,7 @@ if(args[0].equalsIgnoreCase("rollback")) {
 if(AdministradorSgt.testearConexionBases()) {
 	
 	TotemSgt totem=new TotemSgt(contrato); 
-	//TotemSgt totem=new TotemSgt("1193841"); 	
+	
 	AdministradorSgt.guardarTotem(totem, null);	
 	AdministradorSgt.guardarServiceCameras(totem);
 	AdministradorSgt.guardarServiceDevices(totem);	

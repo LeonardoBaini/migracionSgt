@@ -76,11 +76,15 @@ public class MetodosSql extends Conexion {
  
         } catch (SQLException e) {
            
+        	if(e.getMessage().equalsIgnoreCase("Se ha generado un conjunto de resultados para actualización.")) {
+        		System.out.println("Finalizando rollback");
+        	}else {
         	error="Error en insertarOmodificar "+e.getMessage();
             System.out.println(error);
             BuscadorErrores.errores.add(error);
             con.desconectar();
             status=-1;
+        	}
            
         }
         return status;

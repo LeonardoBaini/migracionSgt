@@ -9,6 +9,7 @@ import MetodosSql.Credenciales;
 import MetodosSql.MetodosSql;
 
 public class AdministradorSgt {
+
 	static MetodosSql baseOjoHalconOperativo=new MetodosSql(
 			Credenciales.ip_OjoHalconOperativo,
 			Credenciales.base_OjoHalconOperativo,
@@ -64,6 +65,7 @@ public static boolean testearConexionBases() {
 			txtrLogs.setText(txtrLogs.getText()+"\n"+BuscadorErrores.errores.get(i));
 		
 		}
+		
 	}
 public static void guardarTotem(TotemSgt totem, JTextArea txtrLogs) {
 	if(txtrLogs!=null)
@@ -262,6 +264,8 @@ public static void guardarServiceCameras(TotemSgt totem) {
 	}
 	else {
 		System.out.println("Lo siento, hay errores, no puedo guardar camaras, vea el log de errores.");
+		System.out.println("Usa el parámetro Rollback para deshacer el contrato de la BBDD SGT y vuelve a cargarlo");
+		
 	}
 	
 	
@@ -387,6 +391,56 @@ public static ArrayList obtenerServiceCameras(String contrato)  {
 	
 }
 
+public static void hacerRollback(String contrato) {
+	
+	String queryRollBack="declare @contrato as varchar(max)\r\n" + 
+			"\r\n" + 
+			"set @contrato='"+contrato+"'\r\n" + 
+			"\r\n" + 
+			"declare @name as varchar(max)\r\n" + 
+			"declare @ipRangesId as varchar(max)\r\n" + 
+			"declare @vpn as varchar(max)\r\n" + 
+			"\r\n" + 
+			"\r\n" + 
+			"  set @name=(select name from services where ContractNumber=@contrato);\r\n" + 
+			"  set @ipRangesId=(select id from ipranges where name=@name);\r\n" + 
+			"  set @vpn=(select vpn from services where ContractNumber=@contrato);\r\n" + 
+			"\r\n" + 
+			"\r\n" + 
+			"\r\n" + 
+			" \r\n" + 
+			"  delete FROM [EOH_SGT].[dbo].[ServiceCameras]\r\n" + 
+			"  where name like '%'+@contrato+'%';\r\n" + 
+			"\r\n" + 
+			"  \r\n" + 
+			"  \r\n" + 
+			"  delete from  [EOH_SGT].[dbo].[ServiceDevices]\r\n" + 
+			"  where serviceid=(select id from services where name=@name)\r\n" + 
+			"  \r\n" + 
+			"\r\n" + 
+			" \r\n" + 
+			"  delete\r\n" + 
+			"  FROM [EOH_SGT].[dbo].[Services]\r\n" + 
+			"  where name=@name;\r\n" + 
+			"\r\n" + 
+			"   \r\n" + 
+			"  delete\r\n" + 
+			"  FROM [EOH_SGT].[dbo].[Ips] \r\n" + 
+			"  where iprangeid=@ipRangesId\r\n" + 
+			"  \r\n" + 
+			"    delete\r\n" + 
+			"  FROM [EOH_SGT].[dbo].[IpRanges]\r\n" + 
+			"  where name=@name\r\n" + 
+			"  \r\n" + 
+			"    \r\n" + 
+			"  delete\r\n" + 
+			"  FROM [EOH_SGT].[dbo].[vpn]\r\n" + 
+			"  where name=@vpn";
+	baseSGT.insertarOmodif(queryRollBack);
+	System.out.println("Rollback finalizado.");
+	
+	
+}
 
 
 
