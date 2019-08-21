@@ -58,6 +58,35 @@ public class MetodosSql extends Conexion {
     return fecha;
     }
     
+    public String Strip(String frase) {
+    	
+    	
+		String sinEspacio ="";
+		int flagHayLetra=0;
+		int ultimaLetra=0;
+		for (int i=0;i<frase.length();i++) {
+			if(frase.charAt(i)==' ' && flagHayLetra==0) {
+				
+			}else {
+			
+			sinEspacio=sinEspacio+frase.charAt(i);
+			flagHayLetra=1;
+			
+			}
+		}
+		flagHayLetra=0;
+		ultimaLetra=sinEspacio.length();
+		for(int j=sinEspacio.length()-1;j!=0;j--) {			
+			if(sinEspacio.charAt(j)==' ' && flagHayLetra==0) {
+				ultimaLetra--;
+			}else {
+				flagHayLetra=1;
+				}
+			}
+		
+		System.out.println();
+		return sinEspacio.substring(0, ultimaLetra);
+    }
  
     public int insertarOmodif(String sentenciaSql) {
         System.out.println(sentenciaSql);

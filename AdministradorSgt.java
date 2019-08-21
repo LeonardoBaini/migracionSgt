@@ -201,7 +201,31 @@ private static void  mostrarServiceCamaras(ServiceCameras servicecam) {
     System.out.println("IpId:"+servicecam.getIpId());
 }
 
+static String extraeNombreServiceCamaras(String nombreCrudo) {
+	String retorno=nombreCrudo;
+	if(nombreCrudo.contains(":")) {
+	String recorte=nombreCrudo.substring(nombreCrudo.indexOf(":")+1,nombreCrudo.lastIndexOf("]"));	
+	retorno=baseSGT.Strip(recorte);
+	return retorno;		
+	}else {
+		return retorno;
+	}
+}
+
+
 private static String generaQueryGuardadoServiceCamaras(ServiceCameras servicecam) {
+	
+	/*Pedido del negocio:
+	 * En ServiceCameras, campo Name, extraer el nombre de Milestone,
+	 *  del nombre de la cámara considerando lo que viene después de los “:” y 
+	 *  terminando en el “]”.*/
+	
+	servicecam.setCameraName(extraeNombreServiceCamaras(servicecam.getCameraName()));
+	
+	
+	
+	
+	
 	String query=" insert into ServiceCameras" + 			
 			"(ServiceId\r\n" + 
 			",DeviceId\r\n" + 

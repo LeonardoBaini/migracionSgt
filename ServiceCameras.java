@@ -15,7 +15,10 @@ public class ServiceCameras {
 //_id	Incremental	No
 String camaraIp;//informativo
 String serviceId;//	[EOH_SGT].[Services]._id	SI
-int deviceId=1;//(por ahora le pongo 1 para que guarde pero ,-->	Es mandatorio. Hay que revisar si es necesario que este correctamente cargado para poder sincronizar.	SI
+
+int deviceId=1;// si es la primer cámara=1 sino =4
+
+//(por ahora le pongo 1 para que guarde pero ,-->	Es mandatorio. Hay que revisar si es necesario que este correctamente cargado para poder sincronizar.	SI
 int ipId;//	[EOH_SGT].[Ips]._id hay que machearla con la IP real de la cámara que esta en [Surveillance].[Hardware].URI	SI
 int port=80;//	SI
 String user;// User	[Surveillance].[Hardware].LoginId En la base Surviellance solo hay dos tipos: admin y root.	SI

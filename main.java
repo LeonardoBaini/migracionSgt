@@ -8,7 +8,7 @@ public class main {
 	public static void main(String[] args)  {
 	
 if(args[0].equalsIgnoreCase("rollback")) {
-	System.out.println("Comenzaré rollback, estás de acuerdo? S/N");
+	System.out.println("Comenzaré rollback");
 	
 	String contrato;
     Scanner teclado = new Scanner(System.in);
@@ -48,6 +48,7 @@ if(AdministradorSgt.testearConexionBases()) {
 }
 
 
+		
 		
  }
 }

@@ -363,7 +363,7 @@ public class TotemSgt {
 	private String obtenerIdRecordingServer() {
 		ArrayList<String>listaRecordingServers; // debe ser 1 si es más, hay que avisar y que el negocio mueva las cam a un solo recording
 		String query=
-				 "select idrecorder from hardware where name like '%"+this.getContractNumber()+"%'\r\n" + 
+				 "select upper(idrecorder) from hardware where name like '%"+this.getContractNumber()+"%'\r\n" + 
 				"group by idrecorder;";
 		listaRecordingServers=baseSurveillance.consultarUnaColumna(query);
 		
