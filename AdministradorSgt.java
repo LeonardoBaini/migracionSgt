@@ -29,27 +29,33 @@ public class AdministradorSgt {
 			Credenciales.usuario_SGT,
 			Credenciales.password_SGT
 			);
-public static boolean testearConexionBases() {
+public static boolean testearConexionBases(JTextArea txtrJtextarealog) {
 	boolean todofunciona=true;
 	String SentenciaSql = "select getdate()";
 	String OjoHalconOperativo;
 	String SGT;
 	String Surveillance;
 	System.out.println("Probando acceso a OjoHalconOperativo");
-	OjoHalconOperativo=baseOjoHalconOperativo.consultarUnaCelda(SentenciaSql,null);
+	OjoHalconOperativo=baseOjoHalconOperativo.consultarUnaCelda(SentenciaSql,txtrJtextarealog);
 	System.out.println("Probando acceso a SGT");
-	SGT=baseSGT.consultarUnaCelda(SentenciaSql,null);
+	SGT=baseSGT.consultarUnaCelda(SentenciaSql,txtrJtextarealog);
 	System.out.println("Probando acceso a Surveillance");
-	Surveillance=baseSurveillance.consultarUnaCelda(SentenciaSql,null);
+	Surveillance=baseSurveillance.consultarUnaCelda(SentenciaSql,txtrJtextarealog);
 	
 	if(OjoHalconOperativo.isEmpty()) {
+		if(txtrJtextarealog!=null)
+		txtrJtextarealog.append("No se puede conectar a OjoHalconOperativo\n");
 		System.out.println("No se puede conectar a OjoHalconOperativo");
 		todofunciona=false;
 	}if(SGT.isEmpty()) {
+		if(txtrJtextarealog!=null)
+		txtrJtextarealog.append("No se puede conectar a SGT\n");
 		System.out.println("No se puede conectar a SGT");
 		todofunciona=false;
 		
 	}if(Surveillance.isEmpty()) {
+		if(txtrJtextarealog!=null)
+		txtrJtextarealog.append("No se puede conectar a Surveillance\n");
 		System.out.println("No se puede conectar a Surveillance");
 		todofunciona=false;
 		
@@ -62,14 +68,14 @@ public static boolean testearConexionBases() {
 		for(int i=0;i<errores;i++) {
 			System.out.println(BuscadorErrores.errores.get(i));
 			if(txtrLogs!=null)
-			txtrLogs.setText(txtrLogs.getText()+"\n"+BuscadorErrores.errores.get(i));
+			txtrLogs.append(BuscadorErrores.errores.get(i));
 		
 		}
 		
 	}
 public static void guardarTotem(TotemSgt totem, JTextArea txtrLogs) {
 	if(txtrLogs!=null)
-	txtrLogs.setText(txtrLogs.getText()+"\n"+"Comenzando intento de guardado");
+	txtrLogs.append("Comenzando intento de guardado");
 	String queryVpn="insert into vpn (name) values('"+totem.getVpn()+"');";
 	
 	
@@ -155,10 +161,18 @@ public static String crearQueryTotem(TotemSgt totem) {
 /**
  * Requiere que esté cargado el totem y las camaras, es el último paso....
  * @param totem
+ * @param txtrJtextareasystemlog 
  */
-public static void guardarServiceDevices(TotemSgt totem) {
+public static void guardarServiceDevices(TotemSgt totem, JTextArea txtrJtextareasystemlog) {
 	ArrayList<ServiceDevices> serviceDevices=obtenerServiceDevices(totem);
-	int serviceId=serviceDevices.get(0).getServiceId();
+	int serviceId=-1;
+	try{
+		serviceId=serviceDevices.get(0).getServiceId();
+	}catch(Exception e) {
+		System.out.println(e.getMessage());
+		if(txtrJtextareasystemlog!=null)
+		txtrJtextareasystemlog.append(e.getMessage());
+	}
 	String queryControlDuplicados="select count(1) from serviceDevices where serviceId="+serviceId;
 	int cantRegistros=Integer.parseInt(baseSGT.consultarUnaCelda(queryControlDuplicados,null));
 	
@@ -176,10 +190,14 @@ public static void guardarServiceDevices(TotemSgt totem) {
 		categoryDeviceId=serviceDevices.get(i).getCategoryDeviceId();
 		query="insert into serviceDevices(serviceid,ipid,categorydeviceid)values("+serviceId+","+ipId+","+categoryDeviceId+");";
 		baseSGT.insertarOmodif(query);
+		if(txtrJtextareasystemlog!=null)
+		txtrJtextareasystemlog.append("*******Insertanto en serviceDevices*******");
 		System.out.println("*******************Insertanto en serviceDevices*******************");
 		System.out.println(query);
 	}
 	}else {
+		if(txtrJtextareasystemlog!=null)
+		txtrJtextareasystemlog.append("Ya existen registros ingresados para ServiceDevices para el ServiceId "+serviceId);
 		System.out.println("Ya existen registros ingresados para ServiceDevices para el ServiceId "+serviceId);
 		BuscadorErrores.errores.add("Ya existen registros ingresados para ServiceDevices para el ServiceId "+serviceId);
 	}
@@ -266,28 +284,38 @@ private static String generaQueryGuardadoServiceCamaras(ServiceCameras serviceca
 
 /**
  * 
+ * @param txtrJtextareasystemlog 
  * @param serviceCamList
  * Guarda en la BBDD la lista de camaras generadas por el método obtenerServiceCameras(String contrato) 
  */
-public static void guardarServiceCameras(TotemSgt totem) {
+public static void guardarServiceCameras(TotemSgt totem, JTextArea txtrJtextareasystemlog) {
 	if(BuscadorErrores.errores.size()==0) {
 	ArrayList <ServiceCameras> serviceCamList=obtenerServiceCameras(totem.getContractNumber());
 	String sentenciaSql="";
 	ServiceCameras servicecam = null;
 	System.out.println("Comenzando guardado de cámaras...");
+	if(txtrJtextareasystemlog!=null)
+	txtrJtextareasystemlog.append("Comenzando guardado de cámaras...");
 	for(int i=0;i<serviceCamList.size();i++) {
 	servicecam=serviceCamList.get(i);
 	//mostrarServiceCamaras(servicecam);
+		
 	sentenciaSql=generaQueryGuardadoServiceCamaras(servicecam);
 	
 	baseSGT.insertarOmodif(sentenciaSql);
 	System.out.println("Finalizado guardado de cámara ->"+serviceCamList.get(i).getCameraName());
+	if(txtrJtextareasystemlog!=null)
+	txtrJtextareasystemlog.append("Finalizado guardado de cámara ->"+serviceCamList.get(i).getCameraName());
 	}
 	
     
 	}
 	else {
+		if(txtrJtextareasystemlog!=null)
+		txtrJtextareasystemlog.append("Lo siento, hay errores, no puedo guardar camaras, vea el log de errores.");
 		System.out.println("Lo siento, hay errores, no puedo guardar camaras, vea el log de errores.");
+		if(txtrJtextareasystemlog!=null)
+		txtrJtextareasystemlog.append("Usa el parámetro Rollback para deshacer el contrato de la BBDD SGT y vuelve a cargarlo");
 		System.out.println("Usa el parámetro Rollback para deshacer el contrato de la BBDD SGT y vuelve a cargarlo");
 		
 	}
@@ -321,7 +349,10 @@ public static ArrayList <ServiceDevices> obtenerServiceDevices(TotemSgt totem) {
 			"  order by ipnumber asc";
 	
 	String serviceidString=baseSGT.consultarUnaCelda(sentenciaSqlServiceId,null);
-	int serviceid=Integer.parseInt(serviceidString);		
+	int serviceid=0;
+	try{
+		serviceid=Integer.parseInt(serviceidString);		
+	
 	idsPrimerasIpdeIPS=baseSGT.consultarUnaColumna(SentenciaSqlidsPrimeraNIpdeIPS);
 	
 	for(int i=1;i<=cantCamaras;i++) {
@@ -334,8 +365,69 @@ public static ArrayList <ServiceDevices> obtenerServiceDevices(TotemSgt totem) {
 		
 	}	
 	
+	}catch(Exception e) {
+		System.out.println(e.getMessage());
+	}
 	return serviceDevices;
 	
+}
+
+
+/**
+ * Modificar definición				vendor ProductId de hardware 
+			Campo DeviceId de la tabla ServiceCameras				
+			Id	Name	Brand	Model	
+			1	VB600-Totem	Sony	SNC-VB600	Si es la primer cámara (Totem) y es Sony SNC-VB6xx/VM6xx/EM6xx Series en Milestone -> va VB600-Totem en SGT.
+			2	SNC-CH140-Totem	Sony	SNC-CH140	Si es Sony SNC-CH140/CH180/CH240/CH280/DH240/DH280 en Milestone -> va SNC-CH140-Totem en SGT.
+			3	Operador EB600	SONY	EB600	
+			4	DOMO SNC-EM602R	SONY	SNC-EM602R	Si es una cámara distinta a la primera (Totem) y es Sony SNC-VB6xx/VM6xx/EM6xx Series en Milestone -> va DOMO SNC-EM602R en SGT.
+			5	Domo HIKVISION	HIKVISION	DS-2CD2725FWD-IZS	
+			6	Operador HIKVISION	HIKVISION	DS-2CD4C26FWD	
+			7	SNC-DH160	Sony	SNC-DH160	Si es Sony SNC-CH160/DH160/CH260/DH260/CH220/DH120T/DH220T en Milestone -> va SNC-DH160 en SGT.
+			8	Axis	Axis	P1354	Todo lo que es Axis en Milestone -> va Axis en SGT.
+			9	Operador CH140	SONY	SNC-CH140	
+				salir por error			Si es HikVisionGeneric en Milestone -> este caso exceptúalo porque no esta homologada esta cámara. Sacalo por error para que no migre.
+				salir por error			Cualquier otro valor de Milestone, salgamos por error y lo analizamos casos a caso.
+			
+ * @param serviceCamera
+ * @return
+ */
+public static int obtenerDeviceIdDeServiceCamaras(ServiceCameras serviceCamera) {
+	String hardwareId=serviceCamera.getHardwareID();
+	String query="select vendorproductid from hardware where idhardware='"+hardwareId+"';";
+	String vendorProductid=baseSurveillance.consultarUnaCelda(query, null);
+	int deviceId=-1;
+	
+	/*CASO 1
+	 * Si es la primer cámara (Totem) y es Sony SNC-VB6xx/VM6xx/EM6xx Series en Milestone -> va VB600-Totem en SGT. ES DECIR VA 1*/
+	if(serviceCamera.getIndexCamera()==1 /*Si es la primer cámara*/	&& vendorProductid.equalsIgnoreCase("SNC-VB6xx/VM6xx/EM6xx Series")	) deviceId=1;
+	/*
+	 * CASO2
+	 * Si es Sony SNC-CH140/CH180/CH240/CH280/DH240/DH280 en Milestone -> va SNC-CH140-Totem en SGT, ES DECIR 2.
+	 * lOS DOS MODELOS QUE COINCIDEN CON LA BÚSQUEDA SON SNC-DH160 Y SNC-CH140, COMO SNC-DH160 no entra en este rq, queda SNC-CH140
+	 */
+	if(vendorProductid.equalsIgnoreCase("SNC-CH140")) deviceId=2;
+	/*
+	 * CASO 3 Si es una cámara distinta a la primera (Totem) y es Sony SNC-VB6xx/VM6xx/EM6xx Series en Milestone -> va DOMO SNC-EM602R en SGT es decir 4.
+	 */
+	if(serviceCamera.getIndexCamera()!=1 && vendorProductid.equalsIgnoreCase("SNC-VB6xx/VM6xx/EM6xx Series"))deviceId=4;
+	/*
+	 * CASO 4 Si es Sony SNC-CH160/DH160/CH260/DH260/CH220/DH120T/DH220T en Milestone -> va SNC-DH160 en SGT.
+	 * lOS DOS MODELOS QUE COINCIDEN CON LA BÚSQUEDA SON SNC-DH160 Y SNC-CH140, COMO SNC-DH140 no entra en este rq, queda SNC-CH160 es decir 7.
+	 */
+	if(vendorProductid.equalsIgnoreCase("SNC-DH160")) deviceId=7;
+	/*
+	 * Todo lo que es Axis en Milestone -> va Axis en SGT.
+	 * 
+	 */
+	if(vendorProductid.contains("xis"))deviceId=8;
+	
+	if(deviceId==-1) {
+		BuscadorErrores.errores.add("No hay una definición para -> "+vendorProductid);
+	}
+	
+	
+	return deviceId;
 }
 
 /**
@@ -343,6 +435,7 @@ public static ArrayList <ServiceDevices> obtenerServiceDevices(TotemSgt totem) {
  * @param contrato
  * @return
  */
+
 
 public static ArrayList obtenerServiceCameras(String contrato)  {
 	String queryServiceid=" select id from Services where contractNumber='"+contrato+"';";
@@ -357,11 +450,18 @@ public static ArrayList obtenerServiceCameras(String contrato)  {
 	ArrayList<ServiceCameras>servicecameras=new ArrayList<ServiceCameras>();
 	ServiceCameras servicecam = null;
 	String query=
-			"select upper(idhardware)idhardware,\r\n" + 
-			"name,\r\n" + 
-			"replace(replace(uri,'http:',''),'/','') as ip,\r\n" + 
-			"loginid,ROW_NUMBER() OVER(ORDER BY uri ASC) AS indice \r\n" + 
-			"from hardware where name like '%"+contrato+"%'"; 
+			" select upper(hw.idhardware)idhardware, \r\n" + 
+			" dev.name,\r\n" + 
+			" replace(replace(hw.uri,'http:',''),'/','') as ip, \r\n" + 
+			" hw.loginid,ROW_NUMBER() OVER(ORDER BY uri ASC) AS indice\r\n" + 
+			" from hardware hw\r\n" + 
+			" inner join devices dev on hw.IDHardware=dev.IDHardware\r\n" + 
+			" where hw.name like '%"+contrato+"%'\r\n" + 
+			" and dev.DeviceType='Camera'; ";
+			
+			
+			
+			//"from hardware where name like '%"+contrato+"%'"; 
 	
 	
 	/*matriz=baseSurveillance.consultar(query);
@@ -370,6 +470,7 @@ public static ArrayList obtenerServiceCameras(String contrato)  {
 		for(int j=0;j<matriz.get(i).size();j++)
 		System.out.println(matriz.get(i).get(j));
 	}*/
+	
 	ResultSet res=baseSurveillance.consultarResultSet(query);
 	try {
 		while(res.next()) {
@@ -399,6 +500,9 @@ public static ArrayList obtenerServiceCameras(String contrato)  {
 			}
 			servicecam.setIpId(ipId);
 			
+			
+			servicecam.setDeviceId(obtenerDeviceIdDeServiceCamaras(servicecam));			
+			
 			servicecameras.add(servicecam);			
 			
 		}
@@ -415,7 +519,8 @@ public static ArrayList obtenerServiceCameras(String contrato)  {
 	
 }
 
-public static void hacerRollback(String contrato) {
+public static void hacerRollback(String contrato, JTextArea txtrJtextareasystemlog) {
+	
 	
 	String queryRollBack="declare @contrato as varchar(max)\r\n" + 
 			"\r\n" + 
@@ -431,7 +536,9 @@ public static void hacerRollback(String contrato) {
 			"  set @vpn=(select vpn from services where ContractNumber=@contrato);\r\n" + 
 			"\r\n" + 
 			"\r\n" + 
-			"\r\n" + 
+			"   delete from  [EOH_SGT].[dbo].[OnDemandMessages]\r\n" + 
+			"   where serviceid=(select id from services where name=@name)\r\n" + 
+			"  \r\n" + 
 			" \r\n" + 
 			"  delete FROM [EOH_SGT].[dbo].[ServiceCameras]\r\n" + 
 			"  where name like '%'+@contrato+'%';\r\n" + 
@@ -441,8 +548,7 @@ public static void hacerRollback(String contrato) {
 			"  delete from  [EOH_SGT].[dbo].[ServiceDevices]\r\n" + 
 			"  where serviceid=(select id from services where name=@name)\r\n" + 
 			"  \r\n" + 
-			"\r\n" + 
-			" \r\n" + 
+			"   \r\n" + 
 			"  delete\r\n" + 
 			"  FROM [EOH_SGT].[dbo].[Services]\r\n" + 
 			"  where name=@name;\r\n" + 
@@ -460,7 +566,11 @@ public static void hacerRollback(String contrato) {
 			"  delete\r\n" + 
 			"  FROM [EOH_SGT].[dbo].[vpn]\r\n" + 
 			"  where name=@vpn";
+	if(txtrJtextareasystemlog!=null)
+	txtrJtextareasystemlog.append("Comenzando Rollback del contrato ->"+contrato);
 	baseSGT.insertarOmodif(queryRollBack);
+	if(txtrJtextareasystemlog!=null)
+	txtrJtextareasystemlog.append("Rollback finalizado. query ->\n"+queryRollBack);
 	System.out.println("Rollback finalizado.");
 	
 	

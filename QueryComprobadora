@@ -1,6 +1,6 @@
 declare @contrato as varchar(max)
 
-set @contrato='1193841'
+set @contrato='1319755'
 
 declare @name as varchar(max)
 declare @ipRangesId as varchar(max)
@@ -12,7 +12,9 @@ declare @vpn as varchar(max)
   set @vpn=(select vpn from services where ContractNumber=@contrato);
 
 
-
+   delete from  [EOH_SGT].[dbo].[OnDemandMessages]
+   where serviceid=(select id from services where name=@name)
+  
  
   delete FROM [EOH_SGT].[dbo].[ServiceCameras]
   where name like '%'+@contrato+'%';
@@ -22,8 +24,7 @@ declare @vpn as varchar(max)
   delete from  [EOH_SGT].[dbo].[ServiceDevices]
   where serviceid=(select id from services where name=@name)
   
-
- 
+   
   delete
   FROM [EOH_SGT].[dbo].[Services]
   where name=@name;
@@ -41,7 +42,6 @@ declare @vpn as varchar(max)
   delete
   FROM [EOH_SGT].[dbo].[vpn]
   where name=@vpn
-
   *****************************************
   
   declare @contrato as varchar(max)

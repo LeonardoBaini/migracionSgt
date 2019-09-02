@@ -1,7 +1,12 @@
 package Clases;
 
+import java.awt.EventQueue;
 import java.sql.SQLException;
 import java.util.Scanner;
+
+import javax.swing.JTextArea;
+
+import Pantallas.ppal;
 
 public class main {
 
@@ -21,7 +26,7 @@ if(args[0].equalsIgnoreCase("rollback")) {
     
     if(estaSeguro.nextLine().equalsIgnoreCase("si")) {
     System.out.println("Cumpliendo sus órdenes, haciendo Rollback del contrato ->  " + contrato);
-    AdministradorSgt.hacerRollback(contrato);
+    AdministradorSgt.hacerRollback(contrato, null);
     }else {
     	System.out.println("Ok, no haré cambios, hasta la próxima!.");
     }
@@ -35,13 +40,13 @@ if(args[0].equalsIgnoreCase("rollback")) {
 		contrato=args[0];
 		System.out.println("Intentando guardar el contrato "+contrato);
 
-if(AdministradorSgt.testearConexionBases()) {
+if(AdministradorSgt.testearConexionBases(null)) {
 	
 	TotemSgt totem=new TotemSgt(contrato); 
 	
 	AdministradorSgt.guardarTotem(totem, null);	
-	AdministradorSgt.guardarServiceCameras(totem);
-	AdministradorSgt.guardarServiceDevices(totem);	
+	AdministradorSgt.guardarServiceCameras(totem,null);
+	AdministradorSgt.guardarServiceDevices(totem,null);	
 	
 	
 };
@@ -49,8 +54,23 @@ if(AdministradorSgt.testearConexionBases()) {
 
 
 		
+	
 		
- }
+		
+							
+				/*
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					ppal frame = new ppal();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});*/
+		
+	}
 }
 
 

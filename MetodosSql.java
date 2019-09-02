@@ -236,7 +236,7 @@ public class MetodosSql extends Conexion {
          
         try {
         	if(txtrLogs!=null)
-        	txtrLogs.setText(txtrLogs.getText()+"\nIntentando conectar con "+this.server+" -> "+this.database);
+        	txtrLogs.append("Intentando conectar con "+this.server+" -> "+this.database);
             con.conectar(this.server,this.database,this.usuario,this.password);
             if(con!= null) {
             con.resulsete=con.statemente.executeQuery(SentenciaSql);

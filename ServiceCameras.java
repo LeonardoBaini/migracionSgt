@@ -17,6 +17,21 @@ String camaraIp;//informativo
 String serviceId;//	[EOH_SGT].[Services]._id	SI
 
 int deviceId=1;// si es la primer cámara=1 sino =4
+/* Cambio pedido por pbaustian
+	Modificar definición				vendor ProductId de hardware 
+	Campo DeviceId de la tabla ServiceCameras				
+	Id	Name	Brand	Model	
+	1	VB600-Totem	Sony	SNC-VB600	Si es la primer cámara (Totem) y es Sony SNC-VB6xx/VM6xx/EM6xx Series en Milestone -> va VB600-Totem en SGT.
+	2	SNC-CH140-Totem	Sony	SNC-CH140	Si es Sony SNC-CH140/CH180/CH240/CH280/DH240/DH280 en Milestone -> va SNC-CH140-Totem en SGT.
+	3	Operador EB600	SONY	EB600	
+	4	DOMO SNC-EM602R	SONY	SNC-EM602R	Si es una cámara distinta a la primera (Totem) y es Sony SNC-VB6xx/VM6xx/EM6xx Series en Milestone -> va DOMO SNC-EM602R en SGT.
+	5	Domo HIKVISION	HIKVISION	DS-2CD2725FWD-IZS	
+	6	Operador HIKVISION	HIKVISION	DS-2CD4C26FWD	
+	7	SNC-DH160	Sony	SNC-DH160	Si es Sony SNC-CH160/DH160/CH260/DH260/CH220/DH120T/DH220T en Milestone -> va SNC-DH160 en SGT.
+	8	Axis	Axis	P1354	Todo lo que es Axis en Milestone -> va Axis en SGT.
+	9	Operador CH140	SONY	SNC-CH140	
+		salir por error			Si es HikVisionGeneric en Milestone -> este caso exceptúalo porque no esta homologada esta cámara. Sacalo por error para que no migre.
+		salir por error			Cualquier otro valor de Milestone, salgamos por error y lo analizamos casos a caso.*/
 
 //(por ahora le pongo 1 para que guarde pero ,-->	Es mandatorio. Hay que revisar si es necesario que este correctamente cargado para poder sincronizar.	SI
 int ipId;//	[EOH_SGT].[Ips]._id hay que machearla con la IP real de la cámara que esta en [Surveillance].[Hardware].URI	SI

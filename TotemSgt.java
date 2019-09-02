@@ -76,9 +76,9 @@ public class TotemSgt {
 	}
 	
 	public TotemSgt(String contrato, JTextArea txtrLogs) {
-		txtrLogs.setText("\nComenzando proceso");		
+		txtrLogs.append("Comenzando proceso");		
 		prepararTotemParaSGT(contrato,txtrLogs);
-		txtrLogs.setText(txtrLogs.getText()+"\nFinalizando creación de totem");		
+		txtrLogs.append("Finalizando creación de totem");		
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class TotemSgt {
 
 	private String buscarNombreTotem(String contrato, JTextArea txtrLogs) {
 		if(txtrLogs!=null)
-		txtrLogs.setText(txtrLogs.getText()+"\nIntentando baseOjoHalconOperativo.consultarUnaCelda");
+		txtrLogs.append("Intentando baseOjoHalconOperativo.consultarUnaCelda");
 		return baseOjoHalconOperativo.consultarUnaCelda(
 				"SELECT top 1 Direccion\r\n" + 
 				"  FROM InformacionCliente\r\n" + 
